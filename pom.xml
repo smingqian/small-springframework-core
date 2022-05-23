@@ -4,8 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.nwpu.springframework</groupId>
-    <artifactId>small-spring</artifactId>
+         
+    <groupId>cn.bugstack.springframework</groupId>
+    <artifactId>small-spring-step-02</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
@@ -14,7 +15,26 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
-    <name>small-spring</name>
+    <name>small-spring-step-02</name>
+    <description>
+        small spring is easy study Spring！
+    </description>
+    <url>https://github.com/fuzhengwei/small-spring</url>
+
+    <developers>
+        <developer>
+            <id>small-spring</id>
+            <name>小傅哥</name>
+            <email>184172133@qq.com</email>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>The MIT License</name>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <dependencies>
         <dependency>
