@@ -1,14 +1,13 @@
 package cn.bugstack.springframework.test.bean;
 
-
 public class UserService {
 
     private String uId;
 
     private UserDao userDao;
 
-    public void queryUserInfo() {
-        System.out.println("查询用户信息：" + userDao.queryUserName(uId));
+    public String queryUserInfo() {
+        return userDao.queryUserName(uId);
     }
 
     public String getuId() {
