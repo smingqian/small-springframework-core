@@ -3,23 +3,27 @@ package cn.bugstack.springframework.test.bean;
 
 public class UserService {
 
-    private String name;
+    private String uId;
 
-    public String getName() {
-        return name;
+    private UserDao userDao;
+
+    public void queryUserInfo() {
+        System.out.println("查询用户信息：" + userDao.queryUserName(uId));
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getuId() {
+        return uId;
     }
 
-    public void queryUserInfo(){
-        System.out.println("查询用户信息");
+    public void setuId(String uId) {
+        this.uId = uId;
     }
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("");
-        sb.append("").append(name);
-        return sb.toString();
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 }
