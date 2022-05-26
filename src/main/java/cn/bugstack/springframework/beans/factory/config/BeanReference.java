@@ -6,7 +6,8 @@ public class BeanReference {
     public BeanReference(String beanName) {
         this.beanName = beanName;
     }
-    public String getBeanName(){
+
+    public String getBeanName() {
         return beanName;
     }
 }

@@ -11,6 +11,6 @@ public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         BeanDefinition beanDefinition = beanFactory.getBeanDefinition("userService");
         PropertyValues propertyValues = beanDefinition.getPropertyValues();
-        propertyValues.addPropertyValue(new PropertyValue("company","nwpu"));
+        propertyValues.addPropertyValue(new PropertyValue("company", "nwpu"));
     }
 }

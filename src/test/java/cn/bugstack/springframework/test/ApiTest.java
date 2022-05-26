@@ -25,7 +25,7 @@ import java.io.InputStream;
 public class ApiTest {
 
     @Test
-    public void test_BeanFactory(){
+    public void test_BeanFactory() {
         // 1.初始化 BeanFactory
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 
@@ -35,7 +35,7 @@ public class ApiTest {
         // 3. UserService 设置属性[uId、userDao]
         PropertyValues propertyValues = new PropertyValues();
         propertyValues.addPropertyValue(new PropertyValue("uId", "10001"));
-        propertyValues.addPropertyValue(new PropertyValue("userDao",new BeanReference("userDao")));
+        propertyValues.addPropertyValue(new PropertyValue("userDao", new BeanReference("userDao")));
 
         // 4. UserService 注入bean
         BeanDefinition beanDefinition = new BeanDefinition(UserService.class, propertyValues);
@@ -47,10 +47,12 @@ public class ApiTest {
     }
 
     private ResourceLoader resourceLoader;
+
     @Before
-    public void init(){
+    public void init() {
         resourceLoader = new DefaultResourceLoader();
     }
+
     @Test
     public void test_classpath() throws IOException {
         Resource resource = resourceLoader.getResource("classpath:important.properties");
@@ -58,6 +60,7 @@ public class ApiTest {
         String content = IoUtil.readUtf8(inputStream);
         System.out.println(content);
     }
+
     @Test
     public void test_file() throws IOException {
         Resource resource = resourceLoader.getResource("src/test/resources/important.properties");
@@ -65,6 +68,7 @@ public class ApiTest {
         String content = IoUtil.readUtf8(inputStream);
         System.out.println(content);
     }
+
     @Test
     public void test_url() throws IOException {
         Resource resource = resourceLoader.getResource("https://github.com/fuzhengwei/small-spring/important.properties");
@@ -72,6 +76,7 @@ public class ApiTest {
         String content = IoUtil.readUtf8(inputStream);
         System.out.println(content);
     }
+
     @Test
     public void test_xml() {
         // 1.初始化 BeanFactory
@@ -88,7 +93,7 @@ public class ApiTest {
     }
 
     @Test
-    public void test_BeanFactoryPostProcessorAndBeanPostProcessor(){
+    public void test_BeanFactoryPostProcessorAndBeanPostProcessor() {
         // 1.初始化 BeanFactory
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 
@@ -114,7 +119,7 @@ public class ApiTest {
     public void test_xml_context() {
         // 1.初始化 BeanFactory
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
-
+        applicationContext.registerShutdownHook();
         // 2. 获取Bean对象调用方法
         UserService userService = applicationContext.getBean("userService", UserService.class);
         String result = userService.queryUserInfo();

@@ -1,4 +1,4 @@
 package cn.bugstack.springframework.beans.factory;
 
-public interface HierarchicalBeanFactory extends BeanFactory{
+public interface HierarchicalBeanFactory extends BeanFactory {
 }

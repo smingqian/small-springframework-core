@@ -1,6 +1,9 @@
 package cn.bugstack.springframework.test.bean;
 
-public class UserService {
+import cn.bugstack.springframework.beans.factory.DisposableBean;
+import cn.bugstack.springframework.beans.factory.InitializingBean;
+
+public class UserService implements InitializingBean, DisposableBean {
 
     private String uId;
     private String company;
@@ -41,5 +44,15 @@ public class UserService {
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("执行：UserService.destroy");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("执行：UserService.afterPropertiesSet");
     }
 }

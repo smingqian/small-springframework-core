@@ -22,35 +22,40 @@ import java.io.InputStream;
 import java.lang.annotation.Documented;
 
 public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
-    public XmlBeanDefinitionReader(BeanDefinitionRegistry registry){
+    public XmlBeanDefinitionReader(BeanDefinitionRegistry registry) {
         super(registry);
     }
-    public XmlBeanDefinitionReader(BeanDefinitionRegistry registry, ResourceLoader resourceLoader){
-        super(registry,resourceLoader);
+
+    public XmlBeanDefinitionReader(BeanDefinitionRegistry registry, ResourceLoader resourceLoader) {
+        super(registry, resourceLoader);
     }
+
     @Override
     public void loadBeanDefinitions(Resource resource) throws BeanException {
         try {
-            try(InputStream inputStream = resource.getInputStream()) {
+            try (InputStream inputStream = resource.getInputStream()) {
                 doLoadBeanDefinitions(inputStream);
             }
-        }catch (IOException | ClassNotFoundException e){
-            throw new BeanException("IOException parsing XML document from " + resource,e);
+        } catch (IOException | ClassNotFoundException e) {
+            throw new BeanException("IOException parsing XML document from " + resource, e);
         }
     }
 
-    private void doLoadBeanDefinitions(InputStream inputStream) throws ClassNotFoundException{
+    private void doLoadBeanDefinitions(InputStream inputStream) throws ClassNotFoundException {
         Document doc = XmlUtil.readXML(inputStream);
         Element root = doc.getDocumentElement();
         NodeList childNodes = root.getChildNodes();
-        for (int i = 0;i< childNodes.getLength();i++){
-            if(!(childNodes.item(i) instanceof Element)) continue;
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            if (!(childNodes.item(i) instanceof Element)) continue;
             if (!"bean".equals(childNodes.item(i).getNodeName())) continue;
             // 解析标签
             Element bean = (Element) childNodes.item(i);
             String id = bean.getAttribute("id");
             String name = bean.getAttribute("name");
             String className = bean.getAttribute("class");
+            String initMethod = bean.getAttribute("init-method");
+            String destroyMethodName = bean.getAttribute("destroy-method");
+
             // 获取 Class，方便获取类中的名称
             Class<?> clazz = Class.forName(className);
             // 优先级 id > name
@@ -61,7 +66,10 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
             //定义bean
             BeanDefinition beanDefinition = new BeanDefinition(clazz);
-            for (int j = 0;j<bean.getChildNodes().getLength();j++){
+            beanDefinition.setInitMethodName(initMethod);
+            beanDefinition.setDestroyMethodName(destroyMethodName);
+
+            for (int j = 0; j < bean.getChildNodes().getLength(); j++) {
                 if (!(bean.getChildNodes().item(j) instanceof Element)) continue;
                 if (!"property".equals(bean.getChildNodes().item(j).getNodeName())) continue;
                 // 解析标签 ： property
@@ -72,20 +80,20 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                 // 获取属性值：引入对象、值对象
                 Object value = StrUtil.isNotEmpty(attrRef) ? new BeanReference(attrRef) : attrValue;
                 // 创建属性信息
-                PropertyValue propertyValue = new PropertyValue(attrName,value);
+                PropertyValue propertyValue = new PropertyValue(attrName, value);
                 beanDefinition.getPropertyValues().addPropertyValue(propertyValue);
             }
-            if (getRegistry().containsBeanDefinition(beanName)){
+            if (getRegistry().containsBeanDefinition(beanName)) {
                 throw new BeansException("Duplicate beanName[" + beanName + "] is not allowed");
             }
             // 注册BeanDefinition
-            getRegistry().registerBeanDefinition(beanName,beanDefinition);
+            getRegistry().registerBeanDefinition(beanName, beanDefinition);
         }
     }
 
     @Override
     public void loadBeanDefinitions(Resource... resources) throws BeanException {
-        for (Resource resource: resources){
+        for (Resource resource : resources) {
             loadBeanDefinitions(resource);
         }
     }
