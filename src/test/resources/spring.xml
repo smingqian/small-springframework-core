@@ -10,10 +10,4 @@
 
     <bean id="proxyUserDao" class="cn.bugstack.springframework.test.bean.ProxyBeanFactory"/>
 
-    <bean class="cn.bugstack.springframework.test.event.ContextRefreshedEventListener"/>
-
-    <bean class="cn.bugstack.springframework.test.event.CustomEventListener"/>
-
-    <bean class="cn.bugstack.springframework.test.event.ContextClosedEventListener"/>
-
 </beans>
