@@ -1,9 +1,18 @@
 package cn.bugstack.springframework.test.bean;
 
+import cn.bugstack.springframework.beans.BeanFactoryAware;
+import cn.bugstack.springframework.beans.BeansException;
+import cn.bugstack.springframework.beans.factory.BeanFactory;
+import cn.bugstack.springframework.beans.factory.BeanNameAware;
 import cn.bugstack.springframework.beans.factory.DisposableBean;
 import cn.bugstack.springframework.beans.factory.InitializingBean;
+import cn.bugstack.springframework.context.ApplicationContext;
+import cn.bugstack.springframework.context.ApplicationContextAware;
+import cn.hutool.core.bean.BeanException;
 
-public class UserService implements InitializingBean, DisposableBean {
+public class UserService implements InitializingBean, DisposableBean , ApplicationContextAware, BeanFactoryAware {
+    private ApplicationContext applicationContext;
+    private BeanFactory beanFactory;
 
     private String uId;
     private String company;
@@ -54,5 +63,26 @@ public class UserService implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         System.out.println("执行：UserService.afterPropertiesSet");
+    }
+
+
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeanException {
+        this.applicationContext = applicationContext;
+    }
+
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public BeanFactory getBeanFactory() {
+        return beanFactory;
     }
 }
