@@ -1,23 +1,16 @@
 package cn.bugstack.springframework.test.bean;
 
-import cn.bugstack.springframework.beans.BeanFactoryAware;
-import cn.bugstack.springframework.beans.BeansException;
-import cn.bugstack.springframework.beans.factory.BeanFactory;
-import cn.bugstack.springframework.beans.factory.BeanNameAware;
-import cn.bugstack.springframework.beans.factory.DisposableBean;
-import cn.bugstack.springframework.beans.factory.InitializingBean;
-import cn.bugstack.springframework.context.ApplicationContext;
-import cn.bugstack.springframework.context.ApplicationContextAware;
-import cn.hutool.core.bean.BeanException;
-
-public class UserService implements InitializingBean, DisposableBean , ApplicationContextAware, BeanFactoryAware {
-    private ApplicationContext applicationContext;
-    private BeanFactory beanFactory;
+/**
+ * 博客：https://bugstack.cn - 沉淀、分享、成长，让自己和他人都能有所收获！
+ * 公众号：bugstack虫洞栈
+ * Create by 小傅哥(fustack)
+ */
+public class UserService {
 
     private String uId;
     private String company;
     private String location;
-    private UserDao userDao;
+    private IUserDao userDao;
 
     public String queryUserInfo() {
         return userDao.queryUserName(uId) + "," + company + "," + location;
@@ -47,42 +40,11 @@ public class UserService implements InitializingBean, DisposableBean , Applicati
         this.location = location;
     }
 
-    public UserDao getUserDao() {
+    public IUserDao getUserDao() {
         return userDao;
     }
 
-    public void setUserDao(UserDao userDao) {
+    public void setUserDao(IUserDao userDao) {
         this.userDao = userDao;
-    }
-
-    @Override
-    public void destroy() throws Exception {
-        System.out.println("执行：UserService.destroy");
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        System.out.println("执行：UserService.afterPropertiesSet");
-    }
-
-
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeanException {
-        this.applicationContext = applicationContext;
-    }
-
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
-    }
-
-    public ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-
-    public BeanFactory getBeanFactory() {
-        return beanFactory;
     }
 }
