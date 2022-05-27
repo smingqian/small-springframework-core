@@ -5,10 +5,7 @@ import cn.bugstack.springframework.beans.BeansException;
 import cn.bugstack.springframework.beans.PropertyValue;
 import cn.bugstack.springframework.beans.PropertyValues;
 import cn.bugstack.springframework.beans.factory.*;
-import cn.bugstack.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import cn.bugstack.springframework.beans.factory.config.BeanDefinition;
-import cn.bugstack.springframework.beans.factory.config.BeanPostProcessor;
-import cn.bugstack.springframework.beans.factory.config.BeanReference;
+import cn.bugstack.springframework.beans.factory.config.*;
 import cn.hutool.core.bean.BeanException;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
@@ -25,10 +22,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Object bean = null;
         try {
             // bean = beanDefinition.getBeanClass().newInstance();
+            // bean = createBeanInstance(beanDefinition, beanName, args);
+            // 先对代理对象特殊处理
+            bean = resolveBeforeInstantiation(beanName, beanDefinition);
+            if (null != bean) {
+                return bean;
+            }
+            // 实例化bean
             bean = createBeanInstance(beanDefinition, beanName, args);
-            //填充属性
+            // 填充属性
             applyPropertyValues(beanName, bean, beanDefinition);
-            //执行bean初始化方法以及bpp的前置和后置方法
+            // 执行bean初始化方法以及bpp的前置和后置方法
             bean = initializeBean(beanName, bean, beanDefinition);
         } catch (Exception e) {
             throw new BeansException("Instantiation of bean failed", e);
@@ -37,10 +41,30 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         //注册实现DisposableBean接口的Bean对象
         registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
         //判断是否单例
-        if (beanDefinition.isSingleton()){
+        if (beanDefinition.isSingleton()) {
             registerSingleton(beanName, bean);
         }
         return bean;
+    }
+
+    private Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition) {
+        Object bean = applyBeanPostProcessorsBeforeInitialization(beanDefinition.getBeanClass(), beanName);
+        if (null != bean) {
+            bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
+        }
+        return bean;
+    }
+
+    protected Object applyBeanPostProcessorsBeforeInitialization(Class<?> beanClass, String beanName) {
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                Object result = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessBeforeInitialization(beanClass, beanName);
+                if (null != result) {
+                    return result;
+                }
+            }
+        }
+        return null;
     }
 
     protected void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {
@@ -120,14 +144,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     private Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
 
         // invokeAwareMethods，context借助BPP实现感知
-        if (bean instanceof Aware){
-            if (bean instanceof BeanFactoryAware){
+        if (bean instanceof Aware) {
+            if (bean instanceof BeanFactoryAware) {
                 ((BeanFactoryAware) bean).setBeanFactory(this);
             }
-            if (bean instanceof BeanNameAware){
+            if (bean instanceof BeanNameAware) {
                 ((BeanNameAware) bean).setBeanName(beanName);
             }
-            if (bean instanceof BeanClassLoaderAware){
+            if (bean instanceof BeanClassLoaderAware) {
                 ((BeanClassLoaderAware) bean).setBeanClassLoader(getBeanClassLoader());
             }
         }
