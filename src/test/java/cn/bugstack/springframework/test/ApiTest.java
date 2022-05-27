@@ -10,9 +10,11 @@ import cn.bugstack.springframework.context.support.ClassPathXmlApplicationContex
 import cn.bugstack.springframework.cores.io.DefaultResourceLoader;
 import cn.bugstack.springframework.cores.io.Resource;
 import cn.bugstack.springframework.cores.io.ResourceLoader;
+import cn.bugstack.springframework.test.bean.IUserDao;
 import cn.bugstack.springframework.test.bean.UserService;
 import cn.bugstack.springframework.test.common.MyBeanFactoryPostProcessor;
 import cn.bugstack.springframework.test.common.MyBeanPostProcessor;
+import cn.bugstack.springframework.test.event.CustomEvent;
 import cn.hutool.core.io.IoUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +48,16 @@ public class ApiTest {
     public void test_xml_factorybean() {
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
         UserService userService = applicationContext.getBean("userService", UserService.class);
+        IUserDao userDao = applicationContext.getBean("proxyUserDao", IUserDao.class);
         String result = userService.queryUserInfo();
         System.out.println("测试结果：" + result);
+        System.out.println(userDao);
+    }
+    @Test
+    public void test_event() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
+        applicationContext.publishEvent(new CustomEvent(applicationContext, 1019129009086763L, "成功了！"));
+
+        applicationContext.registerShutdownHook();
     }
 }
