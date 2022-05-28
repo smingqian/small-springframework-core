@@ -7,5 +7,7 @@
 		 http://www.springframework.org/schema/context">
 
     <context:component-scan base-package="cn.bugstack.springframework.test.bean"/>
-
+    <bean class="cn.bugstack.springframework.beans.factory.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:token.properties"/>
+    </bean>
 </beans>

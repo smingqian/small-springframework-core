@@ -7,6 +7,7 @@ import cn.bugstack.springframework.beans.factory.config.BeanDefinition;
 import cn.bugstack.springframework.beans.factory.config.BeanPostProcessor;
 import cn.bugstack.springframework.beans.factory.config.ConfigurableBeanFactory;
 import cn.bugstack.springframework.util.ClassUtils;
+import cn.bugstack.springframework.util.StringValueResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<BeanPostProcessor>();
 
     private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
-
+    // 字符串解析器
+    private final List<StringValueResolver> embeddedValueResolvers = new ArrayList<>();
 
     @Override
     public Object getBean(String name) throws BeansException {
@@ -48,8 +50,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
         }
 
         BeanDefinition beanDefinition = getBeanDefinition(name);
+        // createBean中对AOP进行提前处理
         Object bean = (T) createBean(name, beanDefinition, args);
-        //对bean统一处理：判断是否是factorybean，并进行后续处理
+        // 对bean统一处理：判断是否是factorybean，并进行后续处理
         return (T) getObjectForBeanInstance(bean,name);
     }
 
@@ -73,6 +76,20 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
         this.beanPostProcessors.remove(beanPostProcessor);
         this.beanPostProcessors.add(beanPostProcessor);
+    }
+
+    @Override
+    public void addEmbeddedValueResolver(StringValueResolver valueResolver) {
+        this.embeddedValueResolvers.add(valueResolver);
+    }
+
+    @Override
+    public String resolveEmbeddedValue(String value) {
+        String result = value;
+        for (StringValueResolver resolver : this.embeddedValueResolvers) {
+            result = resolver.resolveStringValue(result);
+        }
+        return result;
     }
 
     public List<BeanPostProcessor> getBeanPostProcessors() {

@@ -5,6 +5,10 @@ import cn.hutool.core.bean.BeanException;
 public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContext {
     private String[] configLocations;
 
+    public ClassPathXmlApplicationContext(){
+
+    }
+
     public ClassPathXmlApplicationContext(String[] configLocations) {
         this.configLocations = configLocations;
         refresh();
